@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f6f2">
+  <meta name="description" content="Entdecke neue Styles, Lieblingsstücke und ausgewählte Mode bei MODO.">
+  <title>MODO — Mode, die sich nach dir anfühlt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #22231f;
+      --muted: #77776f;
+      --paper: #f7f6f2;
+      --white: #fff;
+      --line: #e7e5df;
+      --accent: #ed5b3d;
+      --lime: #d7e86a;
+      --serif: "Playfair Display", Georgia, serif;
+      --sans: "DM Sans", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font-family: var(--sans); }
+    button, input, select { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; text-decoration: none; }
+    .announcement { display: flex; justify-content: center; padding: 9px 16px; background: var(--ink); color: #fff; font-size: 11px; letter-spacing: .04em; }
+    .announcement strong { color: var(--lime); font-weight: 600; }
+    .site-header { position: sticky; top: 0; z-index: 5; background: rgba(247,246,242,.96); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+    .header-main { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; max-width: 1440px; min-height: 76px; margin: auto; padding: 0 5.5%; }
+    .wordmark { justify-self: start; font-size: 27px; font-weight: 700; letter-spacing: .17em; }
+    .main-nav { display: flex; align-items: center; gap: 29px; font-size: 13px; }
+    .main-nav a { transition: color .2s; }
+    .main-nav a:hover, .main-nav .sale-link { color: var(--accent); }
+    .header-actions { display: flex; justify-content: end; align-items: center; gap: 17px; }
+    .icon-button { position: relative; display: grid; width: 36px; height: 36px; place-items: center; border: 0; background: transparent; cursor: pointer; }
+    .icon-button svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .bag-count { position: absolute; top: 0; right: -2px; display: grid; width: 16px; height: 16px; place-items: center; border-radius: 50%; background: var(--accent); color: #fff; font-size: 9px; }
+    .search-row { display: flex; justify-content: center; padding: 0 5.5% 14px; }
+    .search-box { display: flex; width: min(100%, 380px); height: 38px; align-items: center; gap: 9px; padding: 0 12px; background: #eeede8; }
+    .search-box svg { width: 17px; height: 17px; flex: 0 0 auto; fill: none; stroke: var(--muted); stroke-width: 1.7; }
+    .search-box input { width: 100%; border: 0; outline: 0; background: transparent; font-size: 12px; }
+    .search-box input::placeholder { color: #88877f; }
+    .hero { position: relative; display: flex; min-height: 480px; align-items: center; overflow: hidden; background: #c5b9a8; }
+    .hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 44%; }
+    .hero::after { position: absolute; inset: 0; content: ""; background: linear-gradient(90deg, rgba(24,25,21,.50) 0%, rgba(24,25,21,.19) 48%, transparent 76%); }
+    .hero-copy { position: relative; z-index: 1; width: min(1440px, 100%); margin: auto; padding: 56px 10%; color: white; animation: rise .7s ease both; }
+    .eyebrow { margin: 0 0 17px; font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+    .hero h1 { max-width: 480px; margin: 0; font-family: var(--serif); font-size: clamp(48px, 6vw, 76px); font-weight: 500; line-height: 1.02; }
+    .hero-copy > p:not(.eyebrow) { margin: 20px 0 27px; font-size: 14px; }
+    .primary-link { display: inline-flex; min-height: 46px; align-items: center; gap: 24px; padding: 0 19px; background: var(--lime); color: var(--ink); font-size: 12px; font-weight: 700; transition: gap .2s, background .2s; }
+    .primary-link:hover { gap: 32px; background: #e5f48d; }
+    .primary-link span { font-size: 17px; }
+    .trust-strip { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 1440px; margin: auto; padding: 19px 8%; border-bottom: 1px solid var(--line); }
+    .trust-item { display: flex; justify-content: center; align-items: center; gap: 9px; color: #55564f; font-size: 11px; }
+    .trust-item svg { width: 17px; height: 17px; fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .catalog { max-width: 1440px; margin: auto; padding: 66px 7% 78px; }
+    .section-top { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 25px; }
+    .section-kicker { margin: 0 0 7px; color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
+    .section-top h2 { margin: 0; font-family: var(--serif); font-size: 38px; font-weight: 500; }
+    .sort-control { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; }
+    .sort-control select { padding: 8px 22px 8px 2px; border: 0; background: transparent; color: var(--ink); font-size: 11px; cursor: pointer; }
+    .category-tabs { display: flex; gap: 9px; overflow-x: auto; margin-bottom: 28px; scrollbar-width: none; }
+    .category-tabs::-webkit-scrollbar { display: none; }
+    .category-tab { flex: 0 0 auto; padding: 9px 16px; border: 1px solid #dedcd5; border-radius: 99px; background: transparent; font-size: 11px; cursor: pointer; transition: .2s; }
+    .category-tab:hover, .category-tab[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: white; }
+    .product-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 18px; }
+    .product-card { min-width: 0; animation: rise .45s ease both; }
+    .product-image-wrap { position: relative; overflow: hidden; background: #ebe9e2; aspect-ratio: 3 / 4; }
+    .product-image { width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.2,.65,.3,1); }
+    .product-card:hover .product-image { transform: scale(1.035); }
+    .product-tag { position: absolute; top: 11px; left: 11px; padding: 6px 9px; background: var(--white); font-size: 9px; font-weight: 700; letter-spacing: .04em; }
+    .favorite-button { position: absolute; top: 8px; right: 8px; display: grid; width: 34px; height: 34px; place-items: center; border: 0; border-radius: 50%; background: rgba(255,255,255,.88); cursor: pointer; }
+    .favorite-button svg { width: 17px; height: 17px; fill: none; stroke: var(--ink); stroke-width: 1.5; }
+    .favorite-button[aria-pressed="true"] svg { fill: var(--accent); stroke: var(--accent); }
+    .product-info { padding: 12px 2px 0; }
+    .product-brand { margin: 0 0 3px; font-size: 11px; font-weight: 700; }
+    .product-name { overflow: hidden; margin: 0; color: #67675f; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .product-bottom { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 10px; }
+    .product-price { margin: 0; font-size: 12px; font-weight: 700; }
+    .old-price { margin-left: 5px; color: #8a8982; font-size: 10px; font-weight: 400; text-decoration: line-through; }
+    .add-button { padding: 7px 9px; border: 1px solid var(--line); background: transparent; font-size: 10px; cursor: pointer; transition: .2s; }
+    .add-button:hover { border-color: var(--ink); background: var(--ink); color: white; }
+    .empty-state { display: none; padding: 50px 10px; color: var(--muted); text-align: center; font-size: 13px; }
+    .footer { padding: 37px 7%; background: #22231f; color: white; }
+    .footer-inner { display: flex; max-width: 1300px; justify-content: space-between; align-items: center; gap: 20px; margin: auto; }
+    .footer-brand { font-size: 20px; font-weight: 700; letter-spacing: .16em; }
+    .footer p { margin: 0; color: #c4c3bc; font-size: 11px; }
+    .footer-links { display: flex; gap: 18px; color: #e8e7e1; font-size: 11px; }
+    .toast { position: fixed; right: 20px; bottom: 20px; z-index: 10; padding: 13px 17px; transform: translateY(15px); background: var(--ink); color: white; font-size: 12px; opacity: 0; pointer-events: none; transition: .2s; }
+    .toast.visible { transform: translateY(0); opacity: 1; }
+    dialog { width: min(440px, calc(100% - 32px)); padding: 26px; border: 0; background: var(--paper); color: var(--ink); box-shadow: 0 18px 70px #0003; }
+    dialog::backdrop { background: #17181388; }
+    .dialog-head { display: flex; justify-content: space-between; align-items: center; }
+    .dialog-head h2 { margin: 0; font-family: var(--serif); font-size: 27px; font-weight: 500; }
+    .dialog-close { border: 0; background: transparent; font-size: 25px; cursor: pointer; }
+    .cart-content { padding: 22px 0; color: var(--muted); font-size: 13px; }
+    .cart-line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); color: var(--ink); }
+    .checkout-button { width: 100%; padding: 13px; border: 0; background: var(--ink); color: white; font-size: 12px; font-weight: 700; cursor: pointer; }
+    @keyframes rise { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @media (max-width: 850px) {
+      .header-main { padding-inline: 4%; }
+      .main-nav { gap: 17px; }
+      .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .catalog { padding-inline: 5%; }
+      .hero { min-height: 420px; }
+    }
+    @media (max-width: 600px) {
+      .announcement { font-size: 10px; }
+      .header-main { min-height: 62px; grid-template-columns: 1fr auto; }
+      .wordmark { font-size: 24px; }
+      .main-nav { grid-column: 1 / -1; grid-row: 2; justify-content: space-between; gap: 8px; padding: 0 0 12px; font-size: 11px; }
+      .header-actions { grid-column: 2; grid-row: 1; gap: 5px; }
+      .search-row { padding: 0 4% 12px; }
+      .search-box { width: 100%; }
+      .hero { min-height: 435px; align-items: end; }
+      .hero-image { object-position: 60% center; }
+      .hero::after { background: linear-gradient(0deg, rgba(24,25,21,.7), rgba(24,25,21,.05) 88%); }
+      .hero-copy { padding: 48px 7% 39px; }
+      .hero h1 { max-width: 350px; font-size: 49px; }
+      .hero-copy > p:not(.eyebrow) { margin: 13px 0 20px; font-size: 12px; }
+      .trust-strip { padding: 15px 4%; }
+      .trust-item { flex-direction: column; gap: 4px; text-align: center; font-size: 9px; }
+      .trust-item svg { width: 16px; height: 16px; }
+      .catalog { padding: 45px 4% 55px; }
+      .section-top { align-items: start; }
+      .section-top h2 { font-size: 31px; }
+      .sort-control { gap: 2px; font-size: 0; }
+      .sort-control select { max-width: 114px; font-size: 10px; }
+      .category-tabs { margin-right: -4%; padding-right: 4%; }
+      .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 11px; }
+      .product-tag { top: 7px; left: 7px; padding: 5px 7px; font-size: 8px; }
+      .favorite-button { top: 5px; right: 5px; width: 30px; height: 30px; }
+      .product-info { padding-top: 9px; }
+      .product-name { font-size: 10px; }
+      .product-bottom { align-items: start; flex-direction: column; }
+      .add-button { padding: 7px 8px; }
+      .footer-inner { flex-direction: column; align-items: start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="announcement"><strong>HEY, NEUE LIEBLINGSTEILE.</strong>&nbsp; Kostenloser Versand ab CHF 49.–</div>
+  <header class="site-header">
+    <div class="header-main">
+      <a class="wordmark" href="#start" aria-label="MODO Startseite">MODO</a>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="#produkte" data-category-link="Alle">Neu</a>
+        <a href="#produkte" data-category-link="Damen">Damen</a>
+        <a href="#produkte" data-category-link="Herren">Herren</a>
+        <a href="#produkte" data-category-link="Schuhe">Schuhe</a>
+        <a class="sale-link" href="#produkte" data-category-link="Sale">Sale</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-button" id="favorites-filter" type="button" aria-label="Gemerkte Artikel anzeigen" title="Merkliste">
+          <svg viewBox="0 0 24 24"><path d="M20.8 8.7c0 4.5-8.8 10-8.8 10s-8.8-5.5-8.8-10a4.7 4.7 0 0 1 8.8-2.3 4.7 4.7 0 0 1 8.8 2.3Z"/></svg>
+        </button>
+        <button class="icon-button" id="open-cart" type="button" aria-label="Warenkorb öffnen" title="Warenkorb">
+          <svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.6L22 8H6"/><circle cx="10" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
+          <span class="bag-count" id="bag-count">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="search-row">
+      <label class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+        <input id="search-input" type="search" placeholder="Wonach suchst du?" aria-label="Produkte suchen">
+      </label>
+    </div>
+  </header>
+
+  <main id="start">
+    <section class="hero" aria-label="Neue Saison">
+      <img class="hero-image" src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=2000&q=85" alt="Sommerlook mit fließendem Outfit in warmen Farben" fetchpriority="high">
+      <div class="hero-copy">
+        <p class="eyebrow">Die neue Saison ist da</p>
+        <h1>Mehr du.<br>Mehr draußen.</h1>
+        <p>Leichte Styles für lange Tage und spontane Pläne.</p>
+        <a class="primary-link" href="#produkte">Jetzt entdecken <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+    <section class="trust-strip" aria-label="Deine Vorteile">
+      <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M3 7h11v11H3zM14 11h4l3 3v4h-7z"/><circle cx="7.5" cy="19" r="1.5"/><circle cx="17.5" cy="19" r="1.5"/></svg><span>Versand ab CHF 49.– gratis</span></div>
+      <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 9a7 7 0 0 1 12-2l2 5M4 12l2 5a7 7 0 0 0 12-2"/></svg><span>30 Tage Rückgaberecht</span></div>
+      <div class="trust-item"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg><span>Sicher bezahlen</span></div>
+    </section>
+
+    <section class="catalog" id="produkte">
+      <div class="section-top">
+        <div><p class="section-kicker">Ausgewählt für dich</p><h2>Deine neuen Favoriten</h2></div>
+        <label class="sort-control">Sortieren nach
+          <select id="sort-select" aria-label="Produkte sortieren">
+            <option value="featured">Empfohlen</option>
+            <option value="price-asc">Preis aufsteigend</option>
+            <option value="price-desc">Preis absteigend</option>
+          </select>
+        </label>
+      </div>
+      <div class="category-tabs" role="group" aria-label="Kategorie filtern">
+        <button class="category-tab" type="button" data-category="Alle" aria-pressed="true">Alles</button>
+        <button class="category-tab" type="button" data-category="Damen" aria-pressed="false">Damen</button>
+        <button class="category-tab" type="button" data-category="Herren" aria-pressed="false">Herren</button>
+        <button class="category-tab" type="button" data-category="Schuhe" aria-pressed="false">Schuhe</button>
+        <button class="category-tab" type="button" data-category="Accessoires" aria-pressed="false">Accessoires</button>
+        <button class="category-tab" type="button" data-category="Sale" aria-pressed="false">Sale</button>
+      </div>
+      <div class="product-grid" id="product-grid" aria-live="polite"></div>
+      <p class="empty-state" id="empty-state">Keine passenden Artikel gefunden. Versuch es mit einer anderen Suche.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <a class="footer-brand" href="#start">MODO</a>
+      <p>Guter Stil. Gutes Gefühl. © 2026 MODO</p>
+      <div class="footer-links"><a href="#produkte">Kontakt</a><a href="#produkte">Versand & Rückgabe</a><a href="#produkte">Impressum</a></div>
+    </div>
+  </footer>
+
+  <dialog id="cart-dialog" aria-labelledby="cart-title">
+    <div class="dialog-head"><h2 id="cart-title">Dein Warenkorb</h2><button class="dialog-close" id="close-cart" type="button" aria-label="Warenkorb schließen">×</button></div>
+    <div class="cart-content" id="cart-content"></div>
+    <button class="checkout-button" id="checkout-button" type="button">Zur Kasse</button>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // Produkte direkt hier bearbeiten: Marke, Name, Kategorie, Preis und Bild-ID.
+    const products = [
+      { id: 1, brand: "EDITED", name: "Leinenblazer mit lockerer Passform", category: "Damen", price: 89.90, oldPrice: null, tag: "NEU", image: "photo-1591047139829-d91aecb6caea", alt: "Beiger Leinenblazer auf hellem Hintergrund" },
+      { id: 2, brand: "SELECTED", name: "Strickshirt aus Bio-Baumwolle", category: "Damen", price: 39.99, oldPrice: 54.99, tag: "-27%", image: "photo-1576566588028-4147f3842f27", alt: "Modernes helles Strickshirt" },
+      { id: 3, brand: "WEEKDAY", name: "Straight Leg Jeans · Vintage Blue", category: "Damen", price: 59.00, oldPrice: null, tag: "Bestseller", image: "photo-1541099649105-f69ad21f3246", alt: "Jeans in klassischem Blauton" },
+      { id: 4, brand: "MANGO", name: "Minimalistische City Bag", category: "Accessoires", price: 45.99, oldPrice: null, tag: "NEU", image: "photo-1548036328-c9fa89d128fa", alt: "Elegante Tasche in warmem Braun" },
+      { id: 5, brand: "SELECTED", name: "Overshirt aus weichem Twill", category: "Herren", price: 69.99, oldPrice: null, tag: null, image: "photo-1596755094514-f87e34085b2c", alt: "Herrenhemd in gedecktem Farbton" },
+      { id: 6, brand: "NEW BALANCE", name: "Retro Sneaker 574", category: "Schuhe", price: 109.95, oldPrice: 129.95, tag: "-15%", image: "photo-1542291026-7eec264c27ff", alt: "Sportlicher Sneaker in kräftigem Rot" },
+      { id: 7, brand: "ARKET", name: "T-Shirt aus schwerer Bio-Baumwolle", category: "Herren", price: 29.00, oldPrice: null, tag: null, image: "photo-1521572163474-6864f9cf17ab", alt: "Klassisches T-Shirt aus Baumwolle" },
+      { id: 8, brand: "& OTHER STORIES", name: "Sonnenbrille im Retro-Look", category: "Accessoires", price: 35.00, oldPrice: 49.00, tag: "-29%", image: "photo-1511499767150-a48a237f0083", alt: "Sonnenbrille mit dunklen Gläsern" }
+    ];
+
+    const grid = document.querySelector("#product-grid");
+    const searchInput = document.querySelector("#search-input");
+    const sortSelect = document.querySelector("#sort-select");
+    const emptyState = document.querySelector("#empty-state");
+    const favorites = new Set();
+    const cart = new Map();
+    let selectedCategory = "Alle";
+    let favoritesOnly = false;
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[character]);
+    }
+
+    function renderProducts() {
+      const query = searchInput.value.trim().toLocaleLowerCase("de");
+      let visibleProducts = products.filter((product) => {
+        const matchesCategory = selectedCategory === "Alle" || selectedCategory === product.category || (selectedCategory === "Sale" && product.oldPrice);
+        const matchesQuery = `${product.brand} ${product.name} ${product.category}`.toLocaleLowerCase("de").includes(query);
+        return matchesCategory && matchesQuery && (!favoritesOnly || favorites.has(product.id));
+      });
+      if (sortSelect.value === "price-asc") visibleProducts = visibleProducts.toSorted((a, b) => a.price - b.price);
+      if (sortSelect.value === "price-desc") visibleProducts = visibleProducts.toSorted((a, b) => b.price - a.price);
+      grid.innerHTML = visibleProducts.map((product, index) => `
+        <article class="product-card" style="animation-delay:${Math.min(index * 45, 225)}ms">
+          <div class="product-image-wrap">
+            <img class="product-image" src="https://images.unsplash.com/${product.image}?auto=format&fit=crop&w=720&q=80" alt="${escapeHtml(product.alt)}" loading="lazy">
+            ${product.tag ? `<span class="product-tag">${escapeHtml(product.tag)}</span>` : ""}
+            <button class="favorite-button" type="button" aria-label="${favorites.has(product.id) ? "Aus Merkliste entfernen" : "Auf die Merkliste setzen"}" aria-pressed="${favorites.has(product.id)}" data-favorite="${product.id}">
+              <svg viewBox="0 0 24 24"><path d="M20.8 8.7c0 4.5-8.8 10-8.8 10s-8.8-5.5-8.8-10a4.7 4.7 0 0 1 8.8-2.3 4.7 4.7 0 0 1 8.8 2.3Z"/></svg>
+            </button>
+          </div>
+          <div class="product-info">
+            <p class="product-brand">${escapeHtml(product.brand)}</p>
+            <p class="product-name">${escapeHtml(product.name)}</p>
+            <div class="product-bottom"><p class="product-price">${product.price.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}${product.oldPrice ? `<span class="old-price">${product.oldPrice.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</span>` : ""}</p>
+              <button class="add-button" type="button" data-add="${product.id}">In den Warenkorb</button>
+            </div>
+          </div>
+        </article>`).join("");
+      emptyState.style.display = visibleProducts.length ? "none" : "block";
+    }
+
+    function showToast(message) {
+      const toast = document.querySelector("#toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      window.clearTimeout(showToast.timeout);
+      showToast.timeout = window.setTimeout(() => toast.classList.remove("visible"), 2200);
+    }
+
+    function renderCart() {
+      const content = document.querySelector("#cart-content");
+      const entries = [...cart.entries()];
+      if (!entries.length) {
+        content.textContent = "Dein Warenkorb ist noch leer.";
+        return;
+      }
+      const total = entries.reduce((sum, [id, quantity]) => sum + products.find((product) => product.id === id).price * quantity, 0);
+      content.innerHTML = entries.map(([id, quantity]) => {
+        const product = products.find((item) => item.id === id);
+        return `<div class="cart-line"><span>${escapeHtml(product.name)} · ${quantity}×</span><strong>${(product.price * quantity).toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</strong></div>`;
+      }).join("") + `<div class="cart-line"><strong>Gesamt</strong><strong>${total.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</strong></div>`;
+    }
+
+    document.querySelectorAll(".category-tab").forEach((button) => button.addEventListener("click", () => {
+      selectedCategory = button.dataset.category;
+      document.querySelectorAll(".category-tab").forEach((tab) => tab.setAttribute("aria-pressed", String(tab === button)));
+      favoritesOnly = false;
+      document.querySelector("#favorites-filter").setAttribute("aria-pressed", "false");
+      renderProducts();
+    }));
+    document.querySelectorAll("[data-category-link]").forEach((link) => link.addEventListener("click", () => {
+      selectedCategory = link.dataset.categoryLink;
+      const tab = [...document.querySelectorAll(".category-tab")].find((item) => item.dataset.category === selectedCategory);
+      document.querySelectorAll(".category-tab").forEach((item) => item.setAttribute("aria-pressed", String(item === tab)));
+      favoritesOnly = false;
+      renderProducts();
+    }));
+    searchInput.addEventListener("input", renderProducts);
+    sortSelect.addEventListener("change", renderProducts);
+    grid.addEventListener("click", (event) => {
+      const favoriteButton = event.target.closest("[data-favorite]");
+      const addButton = event.target.closest("[data-add]");
+      if (favoriteButton) {
+        const id = Number(favoriteButton.dataset.favorite);
+        favorites.has(id) ? favorites.delete(id) : favorites.add(id);
+        renderProducts();
+      }
+      if (addButton) {
+        const id = Number(addButton.dataset.add);
+        cart.set(id, (cart.get(id) || 0) + 1);
+        document.querySelector("#bag-count").textContent = [...cart.values()].reduce((sum, quantity) => sum + quantity, 0);
+        showToast("Im Warenkorb. Gute Wahl!");
+      }
+    });
+    document.querySelector("#favorites-filter").addEventListener("click", (event) => {
+      favoritesOnly = !favoritesOnly;
+      selectedCategory = "Alle";
+      document.querySelectorAll(".category-tab").forEach((tab) => tab.setAttribute("aria-pressed", String(tab.dataset.category === "Alle")));
+      event.currentTarget.setAttribute("aria-pressed", String(favoritesOnly));
+      renderProducts();
+      document.querySelector("#produkte").scrollIntoView({ behavior: "smooth" });
+    });
+    const cartDialog = document.querySelector("#cart-dialog");
+    document.querySelector("#open-cart").addEventListener("click", () => { renderCart(); cartDialog.showModal(); });
+    document.querySelector("#close-cart").addEventListener("click", () => cartDialog.close());
+    document.querySelector("#checkout-button").addEventListener("click", () => showToast("Der Checkout kann mit deinem Shopsystem verbunden werden."));
+
+    renderProducts();
+
+    if (new URLSearchParams(window.location.search).has("dev")) {
+      fetch(window.location.href, { cache: "no-store" })
+        .then((response) => response.text())
+        .then((initialSource) => {
+          window.setInterval(async () => {
+            try {
+              const response = await fetch(window.location.href, { cache: "no-store" });
+              if ((await response.text()) !== initialSource) window.location.reload();
+            } catch {
+              // Der nächste Prüfzyklus versucht es erneut.
+            }
+          }, 1000);
+        })
+        .catch(() => {});
+    }
+  </script>
+</body>
+</html>
