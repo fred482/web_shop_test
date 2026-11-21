@@ -101,6 +101,28 @@
     .dialog-close { border: 0; background: transparent; font-size: 25px; cursor: pointer; }
     .cart-content { padding: 22px 0; color: var(--muted); font-size: 13px; }
     .cart-line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); color: var(--ink); }
+    .cart-product { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
+    .cart-product-name { max-width: 230px; }
+    .cart-remove { flex: 0 0 auto; padding: 6px 8px; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; }
+    .cart-remove:hover { border-color: var(--accent); color: var(--accent); }
+    .product-detail-button { width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; }
+    .product-detail-button .product-image { display: block; }
+    .product-detail-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; padding-top: 22px; }
+    .detail-page { min-height: 100vh; max-width: 1000px; margin: auto; padding: 28px 5.5%; }
+    .detail-back { display: inline-flex; margin-bottom: 24px; padding: 8px 0; border: 0; background: transparent; color: var(--muted); font-size: 12px; cursor: pointer; }
+    .detail-page .product-detail-layout { padding: 0; }
+    .product-detail-layout img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; background: #ebe9e2; }
+    .product-detail-copy { display: flex; flex-direction: column; }
+    .product-detail-brand { margin: 4px 0 8px; color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .product-detail-name { margin: 0 0 16px; font-family: var(--serif); font-size: 28px; font-weight: 500; }
+    .product-detail-description { margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .product-detail-price { margin: auto 0 18px; font-size: 18px; font-weight: 700; }
+    .product-detail-add { width: 100%; padding: 13px; border: 0; background: var(--ink); color: white; font-size: 12px; font-weight: 700; cursor: pointer; }
+    @media (max-width: 600px) {
+      .product-detail-layout { grid-template-columns: 1fr; max-height: 70vh; overflow-y: auto; }
+      .product-detail-layout img { max-height: 280px; }
+      .product-detail-name { font-size: 24px; }
+    }
     .checkout-button { width: 100%; padding: 13px; border: 0; background: var(--ink); color: white; font-size: 12px; font-weight: 700; cursor: pointer; }
     @keyframes rise { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @media (max-width: 850px) {
@@ -235,14 +257,14 @@
   <script>
     // Produkte direkt hier bearbeiten: Marke, Name, Kategorie, Preis und Bild-ID.
     const products = [
-      { id: 1, brand: "EDITED", name: "Leinenblazer mit lockerer Passform", category: "Damen", price: 89.90, oldPrice: null, tag: "NEU", image: "photo-1591047139829-d91aecb6caea", alt: "Beiger Leinenblazer auf hellem Hintergrund" },
-      { id: 2, brand: "SELECTED", name: "Strickshirt aus Bio-Baumwolle", category: "Damen", price: 39.99, oldPrice: 54.99, tag: "-27%", image: "photo-1576566588028-4147f3842f27", alt: "Modernes helles Strickshirt" },
-      { id: 3, brand: "WEEKDAY", name: "Straight Leg Jeans · Vintage Blue", category: "Damen", price: 59.00, oldPrice: null, tag: "Bestseller", image: "photo-1541099649105-f69ad21f3246", alt: "Jeans in klassischem Blauton" },
-      { id: 4, brand: "MANGO", name: "Minimalistische City Bag", category: "Accessoires", price: 45.99, oldPrice: null, tag: "NEU", image: "photo-1548036328-c9fa89d128fa", alt: "Elegante Tasche in warmem Braun" },
-      { id: 5, brand: "SELECTED", name: "Overshirt aus weichem Twill", category: "Herren", price: 69.99, oldPrice: null, tag: null, image: "photo-1596755094514-f87e34085b2c", alt: "Herrenhemd in gedecktem Farbton" },
-      { id: 6, brand: "NEW BALANCE", name: "Retro Sneaker 574", category: "Schuhe", price: 109.95, oldPrice: 129.95, tag: "-15%", image: "photo-1542291026-7eec264c27ff", alt: "Sportlicher Sneaker in kräftigem Rot" },
-      { id: 7, brand: "ARKET", name: "T-Shirt aus schwerer Bio-Baumwolle", category: "Herren", price: 29.00, oldPrice: null, tag: null, image: "photo-1521572163474-6864f9cf17ab", alt: "Klassisches T-Shirt aus Baumwolle" },
-      { id: 8, brand: "& OTHER STORIES", name: "Sonnenbrille im Retro-Look", category: "Accessoires", price: 35.00, oldPrice: 49.00, tag: "-29%", image: "photo-1511499767150-a48a237f0083", alt: "Sonnenbrille mit dunklen Gläsern" }
+      { id: 1, brand: "EDITED", name: "Leinenblazer mit lockerer Passform", category: "Damen", price: 89.90, oldPrice: null, tag: "NEU", image: "photo-1591047139829-d91aecb6caea", alt: "Beiger Leinenblazer auf hellem Hintergrund", description: "Locker geschnittener Blazer aus weicher Leinenmischung. Perfekt für einen eleganten, lässigen Look." },
+      { id: 2, brand: "SELECTED", name: "Strickshirt aus Bio-Baumwolle", category: "Damen", price: 39.99, oldPrice: 54.99, tag: "-27%", image: "photo-1576566588028-4147f3842f27", alt: "Modernes helles Strickshirt", description: "Leichtes Strickshirt aus Bio-Baumwolle mit angenehmer Passform und weichem Griff." },
+      { id: 3, brand: "WEEKDAY", name: "Straight Leg Jeans · Vintage Blue", category: "Damen", price: 59.00, oldPrice: null, tag: "Bestseller", image: "photo-1541099649105-f69ad21f3246", alt: "Jeans in klassischem Blauton", description: "Klassische Jeans mit geradem Bein und authentischer Vintage-Waschung." },
+      { id: 4, brand: "MANGO", name: "Minimalistische City Bag", category: "Accessoires", price: 45.99, oldPrice: null, tag: "NEU", image: "photo-1548036328-c9fa89d128fa", alt: "Elegante Tasche in warmem Braun", description: "Kompakte Umhängetasche mit praktischem Hauptfach und verstellbarem Schulterriemen." },
+      { id: 5, brand: "SELECTED", name: "Overshirt aus weichem Twill", category: "Herren", price: 69.99, oldPrice: null, tag: null, image: "photo-1596755094514-f87e34085b2c", alt: "Herrenhemd in gedecktem Farbton", description: "Weiches Twill-Overshirt mit entspannter Passform, ideal als leichte Übergangsjacke." },
+      { id: 6, brand: "NEW BALANCE", name: "Retro Sneaker 574", category: "Schuhe", price: 109.95, oldPrice: 129.95, tag: "-15%", image: "photo-1542291026-7eec264c27ff", alt: "Sportlicher Sneaker in kräftigem Rot", description: "Bequemer Retro-Sneaker mit gepolsterter Laufsohle und langlebiger Oberkonstruktion." },
+      { id: 7, brand: "ARKET", name: "T-Shirt aus schwerer Bio-Baumwolle", category: "Herren", price: 29.00, oldPrice: null, tag: null, image: "photo-1521572163474-6864f9cf17ab", alt: "Klassisches T-Shirt aus Baumwolle", description: "Robustes T-Shirt aus schwerer Bio-Baumwolle mit klassischem Rundhalsausschnitt." },
+      { id: 8, brand: "& OTHER STORIES", name: "Sonnenbrille im Retro-Look", category: "Accessoires", price: 35.00, oldPrice: 49.00, tag: "-29%", image: "photo-1511499767150-a48a237f0083", alt: "Sonnenbrille mit dunklen Gläsern", description: "Zeitlose Sonnenbrille mit markanter Retro-Silhouette und UV-Schutz." }
     ];
 
     const grid = document.querySelector("#product-grid");
@@ -258,6 +280,51 @@
       return String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[character]);
     }
 
+    function updateCartCount() {
+      document.querySelector("#bag-count").textContent = [...cart.values()].reduce((sum, quantity) => sum + quantity, 0);
+    }
+
+    function addToCart(id) {
+      cart.set(id, (cart.get(id) || 0) + 1);
+      updateCartCount();
+      showToast("Im Warenkorb. Gute Wahl!");
+    }
+
+    function openProductDetails(id) {
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.searchParams.set("product", id);
+      window.location.assign(url);
+    }
+
+    function renderProductPage(id) {
+      const product = products.find((item) => item.id === id);
+      if (!product) {
+        window.location.replace(window.location.pathname);
+        return;
+      }
+      document.title = `${product.name} — MODO`;
+      document.body.innerHTML = `
+        <main class="detail-page">
+          <button class="detail-back" type="button" id="detail-back">← Zurück zum Shop</button>
+          <div class="product-detail-layout">
+            <img src="https://images.unsplash.com/${product.image}?auto=format&fit=crop&w=900&q=85" alt="${escapeHtml(product.alt)}">
+            <div class="product-detail-copy">
+              <p class="product-detail-brand">${escapeHtml(product.brand)} · ${escapeHtml(product.category)}</p>
+              <h1 class="product-detail-name">${escapeHtml(product.name)}</h1>
+              <p class="product-detail-description">${escapeHtml(product.description)}</p>
+              <p class="product-detail-price">${product.price.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}${product.oldPrice ? ` <span class="old-price">${product.oldPrice.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</span>` : ""}</p>
+              <button class="product-detail-add" type="button" id="detail-add">In den Warenkorb</button>
+            </div>
+          </div>
+        </main>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>`;
+      document.querySelector("#detail-back").addEventListener("click", () => window.location.assign(window.location.pathname));
+      document.querySelector("#detail-add").addEventListener("click", () => {
+        addToCart(product.id);
+      });
+    }
+
     function renderProducts() {
       const query = searchInput.value.trim().toLocaleLowerCase("de");
       let visibleProducts = products.filter((product) => {
@@ -270,7 +337,9 @@
       grid.innerHTML = visibleProducts.map((product, index) => `
         <article class="product-card" style="animation-delay:${Math.min(index * 45, 225)}ms">
           <div class="product-image-wrap">
-            <img class="product-image" src="https://images.unsplash.com/${product.image}?auto=format&fit=crop&w=720&q=80" alt="${escapeHtml(product.alt)}" loading="lazy">
+            <button class="product-detail-button" type="button" data-detail="${product.id}" aria-label="Details für ${escapeHtml(product.name)} anzeigen">
+              <img class="product-image" src="https://images.unsplash.com/${product.image}?auto=format&fit=crop&w=720&q=80" alt="${escapeHtml(product.alt)}" loading="lazy">
+            </button>
             ${product.tag ? `<span class="product-tag">${escapeHtml(product.tag)}</span>` : ""}
             <button class="favorite-button" type="button" aria-label="${favorites.has(product.id) ? "Aus Merkliste entfernen" : "Auf die Merkliste setzen"}" aria-pressed="${favorites.has(product.id)}" data-favorite="${product.id}">
               <svg viewBox="0 0 24 24"><path d="M20.8 8.7c0 4.5-8.8 10-8.8 10s-8.8-5.5-8.8-10a4.7 4.7 0 0 1 8.8-2.3 4.7 4.7 0 0 1 8.8 2.3Z"/></svg>
@@ -289,6 +358,7 @@
 
     function showToast(message) {
       const toast = document.querySelector("#toast");
+      if (!toast) return;
       toast.textContent = message;
       toast.classList.add("visible");
       window.clearTimeout(showToast.timeout);
@@ -305,10 +375,14 @@
       const total = entries.reduce((sum, [id, quantity]) => sum + products.find((product) => product.id === id).price * quantity, 0);
       content.innerHTML = entries.map(([id, quantity]) => {
         const product = products.find((item) => item.id === id);
-        return `<div class="cart-line"><span>${escapeHtml(product.name)} · ${quantity}×</span><strong>${(product.price * quantity).toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</strong></div>`;
+        return `<div class="cart-line"><div class="cart-product"><span class="cart-product-name">${escapeHtml(product.name)} · ${quantity}×</span><button class="cart-remove" type="button" data-remove="${id}" aria-label="${escapeHtml(product.name)} aus dem Warenkorb entfernen">Entfernen</button></div><strong>${(product.price * quantity).toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</strong></div>`;
       }).join("") + `<div class="cart-line"><strong>Gesamt</strong><strong>${total.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</strong></div>`;
     }
 
+    const detailId = Number(new URLSearchParams(window.location.search).get("product"));
+    if (detailId) {
+      renderProductPage(detailId);
+    } else {
     document.querySelectorAll(".category-tab").forEach((button) => button.addEventListener("click", () => {
       selectedCategory = button.dataset.category;
       document.querySelectorAll(".category-tab").forEach((tab) => tab.setAttribute("aria-pressed", String(tab === button)));
@@ -328,16 +402,17 @@
     grid.addEventListener("click", (event) => {
       const favoriteButton = event.target.closest("[data-favorite]");
       const addButton = event.target.closest("[data-add]");
+      const detailButton = event.target.closest("[data-detail]");
       if (favoriteButton) {
         const id = Number(favoriteButton.dataset.favorite);
         favorites.has(id) ? favorites.delete(id) : favorites.add(id);
         renderProducts();
       }
       if (addButton) {
-        const id = Number(addButton.dataset.add);
-        cart.set(id, (cart.get(id) || 0) + 1);
-        document.querySelector("#bag-count").textContent = [...cart.values()].reduce((sum, quantity) => sum + quantity, 0);
-        showToast("Im Warenkorb. Gute Wahl!");
+        addToCart(Number(addButton.dataset.add));
+      }
+      if (detailButton) {
+        openProductDetails(Number(detailButton.dataset.detail));
       }
     });
     document.querySelector("#favorites-filter").addEventListener("click", (event) => {
@@ -351,6 +426,15 @@
     const cartDialog = document.querySelector("#cart-dialog");
     document.querySelector("#open-cart").addEventListener("click", () => { renderCart(); cartDialog.showModal(); });
     document.querySelector("#close-cart").addEventListener("click", () => cartDialog.close());
+    document.querySelector("#cart-content").addEventListener("click", (event) => {
+      const removeButton = event.target.closest("[data-remove]");
+      if (!removeButton) return;
+      const id = Number(removeButton.dataset.remove);
+      cart.delete(id);
+      updateCartCount();
+      renderCart();
+      showToast("Artikel aus dem Warenkorb entfernt.");
+    });
     document.querySelector("#checkout-button").addEventListener("click", () => showToast("Der Checkout kann mit deinem Shopsystem verbunden werden."));
 
     renderProducts();
@@ -369,6 +453,7 @@
           }, 1000);
         })
         .catch(() => {});
+    }
     }
   </script>
 </body>
