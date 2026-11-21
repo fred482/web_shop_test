@@ -130,6 +130,15 @@
       .product-detail-name { font-size: 24px; }
     }
     .checkout-button { width: 100%; padding: 13px; border: 0; background: var(--ink); color: white; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .checkout-button:disabled { background: #aaa99f; cursor: not-allowed; }
+    .checkout-page { max-width: 720px; min-height: 100vh; margin: auto; padding: 32px 5.5%; }
+    .checkout-back { display: inline-flex; margin-bottom: 28px; color: var(--muted); font-size: 12px; }
+    .checkout-page h1 { margin: 0 0 10px; font-family: var(--serif); font-size: 38px; font-weight: 500; }
+    .checkout-notice { margin: 18px 0 28px; padding: 15px; border: 1px solid var(--line); background: #eeede8; font-size: 13px; line-height: 1.6; }
+    .checkout-summary { padding: 20px; border: 1px solid var(--line); background: var(--white); }
+    .checkout-summary h2 { margin: 0 0 12px; font-family: var(--serif); font-size: 23px; font-weight: 500; }
+    .checkout-summary-item, .checkout-total { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .checkout-total { margin-top: 5px; border: 0; font-size: 15px; }
     @keyframes rise { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @media (max-width: 850px) {
       .header-main { padding-inline: 4%; }
@@ -140,6 +149,9 @@
     }
     @media (max-width: 600px) {
       dialog { padding: 20px; }
+      .checkout-page { padding: 24px 4%; }
+      .checkout-page h1 { font-size: 32px; }
+      .checkout-summary { padding: 16px; }
       .cart-line { gap: 8px; }
       .cart-product { min-width: 0; }
       .cart-product-name { overflow-wrap: anywhere; }
@@ -395,6 +407,7 @@
     function renderCart() {
       const content = document.querySelector("#cart-content");
       const entries = [...cart.entries()];
+      document.querySelector("#checkout-button").disabled = entries.length === 0;
       if (!entries.length) {
         content.textContent = "Dein Warenkorb ist noch leer.";
         return;
@@ -410,9 +423,37 @@
       }).join("") + `<div class="cart-line"><strong>Gesamt</strong><strong>${total.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</strong></div>`;
     }
 
-    const detailId = Number(new URLSearchParams(window.location.search).get("product"));
+    function renderCheckoutPage() {
+      const entries = [...cart.entries()].map(([id, quantity]) => ({
+        product: products.find((item) => item.id === id),
+        quantity
+      })).filter((entry) => entry.product);
+      const total = entries.reduce((sum, entry) => sum + entry.product.price * entry.quantity, 0);
+      document.title = "Demo-Kasse — MODO";
+      document.body.innerHTML = `
+        <main class="checkout-page">
+          <a class="checkout-back" href="${escapeHtml(window.location.pathname)}">← Zurück zum Shop</a>
+          <p class="section-kicker">Demo-Kasse</p>
+          <h1>Dein Einkauf</h1>
+          <p class="checkout-notice">In diesem Demo-Shop sind Zahlungen deaktiviert. Es wird keine Bestellung abgeschlossen und es werden keine Zahlungsdaten erfasst. Dein Warenkorb bleibt gespeichert.</p>
+          <section class="checkout-summary" aria-labelledby="checkout-summary-title">
+            <h2 id="checkout-summary-title">Warenkorbübersicht</h2>
+            ${entries.length ? entries.map(({ product, quantity }) => `
+              <div class="checkout-summary-item">
+                <span>${escapeHtml(product.name)} · ${quantity}×</span>
+                <strong>${(product.price * quantity).toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</strong>
+              </div>`).join("") + `
+              <div class="checkout-total"><strong>Gesamt</strong><strong>${total.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</strong></div>` : `<p>Dein Warenkorb ist leer.</p>`}
+          </section>
+        </main>`;
+    }
+
+    const pageParams = new URLSearchParams(window.location.search);
+    const detailId = Number(pageParams.get("product"));
     if (detailId) {
       renderProductPage(detailId);
+    } else if (pageParams.has("checkout")) {
+      renderCheckoutPage();
     } else {
     document.querySelectorAll(".category-tab").forEach((button) => button.addEventListener("click", () => {
       selectedCategory = button.dataset.category;
@@ -473,7 +514,9 @@
       renderCart();
       showToast("Artikel aus dem Warenkorb entfernt.");
     });
-    document.querySelector("#checkout-button").addEventListener("click", () => showToast("Der Checkout kann mit deinem Shopsystem verbunden werden."));
+    document.querySelector("#checkout-button").addEventListener("click", () => {
+      if (cart.size) window.location.assign("?checkout");
+    });
 
     renderProducts();
     updateCartCount();
