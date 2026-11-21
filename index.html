@@ -273,7 +273,7 @@
     const sortSelect = document.querySelector("#sort-select");
     const emptyState = document.querySelector("#empty-state");
     const favorites = new Set();
-    const cart = new Map();
+    const cart = new Map(JSON.parse(localStorage.getItem("modo-cart") || "[]"));
     let selectedCategory = "Alle";
     let favoritesOnly = false;
 
@@ -282,11 +282,13 @@
     }
 
     function updateCartCount() {
-      document.querySelector("#bag-count").textContent = [...cart.values()].reduce((sum, quantity) => sum + quantity, 0);
+      const count = document.querySelector("#bag-count");
+      if (count) count.textContent = [...cart.values()].reduce((sum, quantity) => sum + quantity, 0);
     }
 
     function addToCart(id) {
       cart.set(id, (cart.get(id) || 0) + 1);
+      localStorage.setItem("modo-cart", JSON.stringify([...cart]));
       updateCartCount();
       showToast("Im Warenkorb. Gute Wahl!");
     }
@@ -421,6 +423,7 @@
       if (!removeButton) return;
       const id = Number(removeButton.dataset.remove);
       cart.delete(id);
+      localStorage.setItem("modo-cart", JSON.stringify([...cart]));
       updateCartCount();
       renderCart();
       showToast("Artikel aus dem Warenkorb entfernt.");
@@ -428,6 +431,7 @@
     document.querySelector("#checkout-button").addEventListener("click", () => showToast("Der Checkout kann mit deinem Shopsystem verbunden werden."));
 
     renderProducts();
+    updateCartCount();
 
     if (new URLSearchParams(window.location.search).has("dev")) {
       fetch(window.location.href, { cache: "no-store" })
