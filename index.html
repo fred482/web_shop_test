@@ -314,6 +314,7 @@
       { id: 29, brand: "NORDGREEN", name: "Minimalistische Armbanduhr", category: "Accessoires", price: 129.00, oldPrice: null, tag: "NEU", image: "photo-1523275335684-37898b6baf30", alt: "Minimalistische Armbanduhr mit hellem Zifferblatt", description: "Schlichte Armbanduhr mit klar gestaltetem Zifferblatt als elegantes Accessoire." },
       { id: 30, brand: "VANS", name: "Skatesneaker aus Canvas", category: "Schuhe", price: 74.95, oldPrice: null, tag: null, image: "photo-1608231387042-66d1773070a5", alt: "Lässiger Canvas-Sneaker", description: "Bequemer Sneaker mit robuster Gummisohle und unkompliziertem Canvas-Obermaterial." }
     ];
+    const categoryOrder = ["Damen", "Herren", "Schuhe", "Accessoires"];
 
     const grid = document.querySelector("#product-grid");
     const searchInput = document.querySelector("#search-input");
@@ -375,8 +376,9 @@
         const matchesQuery = `${product.brand} ${product.name} ${product.category} ${product.season || ""}`.toLocaleLowerCase("de").includes(query);
         return matchesCategory && matchesQuery && (!favoritesOnly || favorites.has(product.id));
       });
-      if (sortSelect.value === "price-asc") visibleProducts = visibleProducts.toSorted((a, b) => a.price - b.price);
-      if (sortSelect.value === "price-desc") visibleProducts = visibleProducts.toSorted((a, b) => b.price - a.price);
+      if (sortSelect.value === "featured") visibleProducts = visibleProducts.toSorted((a, b) => categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category));
+      else if (sortSelect.value === "price-asc") visibleProducts = visibleProducts.toSorted((a, b) => a.price - b.price);
+      else if (sortSelect.value === "price-desc") visibleProducts = visibleProducts.toSorted((a, b) => b.price - a.price);
       grid.innerHTML = visibleProducts.map((product, index) => `
         <article class="product-card" style="animation-delay:${Math.min(index * 45, 225)}ms">
           <div class="product-image-wrap">
