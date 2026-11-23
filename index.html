@@ -41,7 +41,20 @@
     .icon-button { position: relative; display: grid; width: 36px; height: 36px; place-items: center; border: 0; background: transparent; cursor: pointer; }
     .icon-button svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
     .bag-count { position: absolute; top: 0; right: -2px; display: grid; width: 16px; height: 16px; place-items: center; border-radius: 50%; background: var(--accent); color: #fff; font-size: 9px; }
-    .search-row { display: flex; justify-content: center; padding: 0 5.5% 14px; }
+    .search-row { position: relative; display: flex; justify-content: center; padding: 0 5.5% 14px; }
+    .search-suggestions { position: absolute; z-index: 8; top: 38px; width: min(100% - 11%, 380px); padding: 6px; border: 1px solid var(--line); background: var(--white); box-shadow: 0 12px 30px #22231f18; }
+    .search-suggestions[hidden] { display: none; }
+    .search-suggestion { display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 7px; border: 0; background: transparent; text-align: left; cursor: pointer; }
+    .search-suggestion:hover, .search-suggestion:focus { background: #eeede8; outline: 0; }
+    .search-suggestion img { width: 44px; height: 52px; object-fit: cover; background: #ebe9e2; }
+    .search-suggestion-name { display: block; font-size: 11px; }
+    .search-suggestion-brand { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .search-suggestion-price { font-size: 10px; font-weight: 700; }
+    .search-page { max-width: 1440px; min-height: 100vh; margin: auto; padding: 28px 5.5% 70px; }
+    .search-page-header { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin: 20px 0 28px; }
+    .search-page-header h1 { margin: 0; font-family: var(--serif); font-size: 38px; font-weight: 500; }
+    .search-page-header p { margin: 7px 0 0; color: var(--muted); font-size: 12px; }
+    .search-page-back { display: inline-flex; margin-bottom: 20px; color: var(--muted); font-size: 12px; }
     .search-box { display: flex; width: min(100%, 380px); height: 38px; align-items: center; gap: 9px; padding: 0 12px; background: #eeede8; }
     .search-box svg { width: 17px; height: 17px; flex: 0 0 auto; fill: none; stroke: var(--muted); stroke-width: 1.7; }
     .search-box input { width: 100%; border: 0; outline: 0; background: transparent; font-size: 12px; }
@@ -97,6 +110,24 @@
     .toast.visible { transform: translateY(0); opacity: 1; }
     dialog { width: min(440px, calc(100% - 32px)); padding: 26px; border: 0; background: var(--paper); color: var(--ink); box-shadow: 0 18px 70px #0003; }
     dialog::backdrop { background: #17181388; }
+    #sale-dialog { width: min(520px, calc(100% - 32px)); padding: 0; }
+    .sale-popup-layout { display: grid; grid-template-columns: 42% 58%; min-height: 280px; }
+    .sale-popup-layout img { width: 100%; height: 100%; min-height: 280px; object-fit: cover; }
+    .sale-popup-copy { display: flex; flex-direction: column; padding: 22px; }
+    .sale-popup-close { align-self: flex-end; width: 30px; height: 30px; border: 0; background: transparent; font-size: 24px; line-height: 1; cursor: pointer; }
+    .sale-popup-copy .section-kicker { margin: 8px 0 6px; }
+    .sale-popup-name { margin: 0 0 10px; font-family: var(--serif); font-size: 25px; font-weight: 500; }
+    .sale-popup-description { margin: 0 0 16px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .sale-popup-price { margin: auto 0 14px; font-size: 16px; font-weight: 700; }
+    .sale-popup-actions { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    .sale-buy-button, .sale-dismiss-button { min-height: 42px; border: 0; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .sale-buy-button { background: var(--ink); color: white; }
+    .sale-dismiss-button { padding: 0 14px; background: var(--line); }
+    @media (max-width: 600px) {
+      .sale-popup-layout { grid-template-columns: 38% 62%; }
+      .sale-popup-copy { padding: 16px; }
+      .sale-popup-name { font-size: 20px; }
+    }
     .dialog-head { display: flex; justify-content: space-between; align-items: center; }
     .dialog-head h2 { margin: 0; font-family: var(--serif); font-size: 27px; font-weight: 500; }
     .dialog-close { border: 0; background: transparent; font-size: 25px; cursor: pointer; }
@@ -220,8 +251,9 @@
     <div class="search-row">
       <label class="search-box">
         <svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
-        <input id="search-input" type="search" placeholder="Wonach suchst du?" aria-label="Produkte suchen">
+        <input id="search-input" type="search" placeholder="Wonach suchst du?" aria-label="Produkte suchen" autocomplete="off">
       </label>
+      <div class="search-suggestions" id="search-suggestions" role="listbox" hidden></div>
     </div>
   </header>
 
@@ -274,6 +306,22 @@
     </div>
   </footer>
 
+  <dialog id="sale-dialog" aria-labelledby="sale-popup-title">
+    <div class="sale-popup-layout">
+      <img id="sale-popup-image" src="" alt="">
+      <div class="sale-popup-copy">
+        <button class="sale-popup-close" id="close-sale-popup" type="button" aria-label="Angebot schließen">×</button>
+        <p class="section-kicker">Aktuelles Angebot</p>
+        <h2 class="sale-popup-name" id="sale-popup-title"></h2>
+        <p class="sale-popup-description" id="sale-popup-description"></p>
+        <p class="sale-popup-price" id="sale-popup-price"></p>
+        <div class="sale-popup-actions">
+          <button class="sale-buy-button" id="sale-buy-button" type="button">In den Warenkorb</button>
+          <button class="sale-dismiss-button" id="dismiss-sale-popup" type="button">Schließen</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
   <dialog id="cart-dialog" aria-labelledby="cart-title">
     <div class="dialog-head"><h2 id="cart-title">Dein Warenkorb</h2><button class="dialog-close" id="close-cart" type="button" aria-label="Warenkorb schließen">×</button></div>
     <div class="cart-content" id="cart-content"></div>
@@ -285,8 +333,8 @@
     // Produkte direkt hier bearbeiten: Marke, Name, Kategorie, Preis und Bild-ID.
     const products = [
       { id: 1, brand: "EDITED", name: "Collegejacke mit lockerer Passform", category: "Damen", price: 89.90, oldPrice: null, tag: "NEU", image: "photo-1591047139829-d91aecb6caea", alt: "Beige Collegejacke auf hellem Hintergrund", description: "Lässige Collegejacke mit lockerer Passform für vielseitige Looks." },
-      { id: 2, brand: "SELECTED", name: "Jeansrock", category: "Damen", price: 39.99, oldPrice: 54.99, tag: "-27%", image: "photo-1591369822096-ffd140ec948f", alt: "Damen-Jeansrock aus Denim", description: "Klassischer Jeansrock aus Denim mit vielseitig kombinierbarem Schnitt." },
-      { id: 3, brand: "WEEKDAY", name: "Moderne Jeans mit Knierissen", category: "Damen", price: 59.00, oldPrice: null, tag: "Bestseller", image: "photo-1541099649105-f69ad21f3246", alt: "Damenjeans mit Rissen an den Knien", description: "Moderne Jeans mit geradem Bein und markanten Rissen an den Knien." },
+      { id: 2, brand: "SELECTED", name: "Jeans Kleid", category: "Damen", price: 39.99, oldPrice: 54.99, tag: "-27%", image: "photo-1591369822096-ffd140ec948f", alt: "Klassisches Jeanskleid aus Denim", description: "Klassischer Jeanskleid aus Denim mit festem Schnitt." },
+      { id: 3, brand: "Destroyed", name: "Moderne Jeans mit Knie Löcher", category: "Damen", price: 59.00, oldPrice: null, tag: "Bestseller", image: "photo-1541099649105-f69ad21f3246", alt: "Damenjeans mit Löchern an den Knien", description: "Moderne Jeans mit geradem Bein und markanten Rissen an den Knien." },
       { id: 4, brand: "MANGO", name: "Minimalistische City Bag", category: "Accessoires", price: 45.99, oldPrice: null, tag: "NEU", image: "photo-1548036328-c9fa89d128fa", alt: "Elegante Tasche in warmem Braun", description: "Kompakte Umhängetasche mit praktischem Hauptfach und verstellbarem Schulterriemen." },
       { id: 5, brand: "SELECTED", name: "Langarmhemd aus weichem Twill", category: "Herren", price: 69.99, oldPrice: null, tag: null, image: "photo-1596755094514-f87e34085b2c", alt: "Herren-Langarmhemd aus weichem Twill", description: "Weiches Langarmhemd aus Twill mit entspannter Passform." },
       { id: 6, brand: "NEW BALANCE", name: "Retro Sneaker 574", category: "Schuhe", price: 109.95, oldPrice: 129.95, tag: "-15%", image: "photo-1542291026-7eec264c27ff", alt: "Sportlicher Sneaker in kräftigem Rot", description: "Bequemer Retro-Sneaker mit gepolsterter Laufsohle und langlebiger Oberkonstruktion." },
@@ -297,15 +345,12 @@
       { id: 11, brand: "MANGO", name: "Jeansjacke mit Fell", category: "Damen", season: "Winter", price: 119.99, oldPrice: 149.99, tag: "-20%", image: "photo-1544923246-77307dd654cb", alt: "Damen-Jeansjacke mit Fell", description: "Warme Jeansjacke mit Fellbesatz, Kapuze und praktischen Seitentaschen." },
       { id: 12, brand: "WEEKDAY", name: "Komplettes Outfit mit T-Shirt, Bluse, Hose und Schuhen", category: "Damen", price: 249.00, oldPrice: null, tag: "NEU", image: "photo-1525507119028-ed4c629a60a3", alt: "Damen-Outfit mit T-Shirt, Bluse, Hose und Schuhen", description: "Komplett zusammengestelltes Outfit mit T-Shirt, Bluse, Hose und passenden Schuhen." },
       { id: 13, brand: "SELECTED", name: "Wide-Leg-Hose aus weichem Twill", category: "Damen", price: 64.99, oldPrice: null, tag: null, image: "photo-1594633312681-425c7b97ccd1", alt: "Damenhose mit weitem Bein", description: "Bequeme Hose mit weitem Bein und klarer Silhouette für Alltag und Büro." },
-      { id: 14, brand: "ARKET", name: "Cardigan aus Merinowollmix", category: "Damen", price: 89.00, oldPrice: null, tag: null, image: "photo-1490481651871-ab68de25d43d", alt: "Warmer Strickcardigan für Damen", description: "Angenehm weicher Cardigan aus Merinowollmix, ideal zum Überziehen an kühlen Tagen." },
-      { id: 15, brand: "SELECTED", name: "Wollmantel in zeitlosem Navy", category: "Herren", season: "Winter", price: 179.00, oldPrice: null, tag: "WINTER", image: "photo-1551028719-00167b16eac5", alt: "Klassischer Herrenmantel für den Winter", description: "Eleganter, warmer Mantel mit klarer Linienführung für kalte Tage und besondere Anlässe." },
-      { id: 16, brand: "JACK & JONES", name: "T-Shirt mit Rundhals", category: "Herren", price: 59.99, oldPrice: null, tag: null, image: "photo-1523381210434-271e8be1f52b", alt: "Herren-T-Shirt mit Rundhalsausschnitt", description: "Klassisches T-Shirt mit Rundhalsausschnitt und angenehmer Passform." },
-      { id: 17, brand: "SELECTED", name: "Gefütterte Parkajacke", category: "Herren", season: "Winter", price: 159.00, oldPrice: 189.00, tag: "-16%", image: "photo-1551488831-00ddcb6c6bd3", alt: "Gefütterte Herrenjacke für kaltes Wetter", description: "Wetterfeste Parkajacke mit warmer Fütterung und verstellbarer Kapuze." },
+      { id: 15, brand: "SELECTED", name: "Lederjacke im Rocker Style", category: "Herren", season: "Winter", price: 179.00, oldPrice: null, tag: "WINTER", image: "photo-1551028719-00167b16eac5", alt: "Elegante Lederjacke im Rocker Style", description: "Elegante Lederjacke mit klarer Linienführung für besondere Anlässe." },
       { id: 18, brand: "WEEKDAY", name: "Weißes Langarmhemd mit Krawatte", category: "Herren", price: 54.00, oldPrice: null, tag: null, image: "photo-1598033129183-c4f50c736f10", alt: "Weißes Herren-Langarmhemd mit Krawatte", description: "Weißes Langarmhemd mit Krawatte und klassischem Schnitt." },
       { id: 19, brand: "ARKET", name: "Gelber Trainingsanzug aus Wolle", category: "Damen", price: 69.00, oldPrice: null, tag: null, image: "photo-1515886657613-9f3515b0c78f", alt: "Gelber Woll-Trainingsanzug für Herren", description: "Trainingsanzug aus gelber Wolle mit sportlichem Schnitt und bequemem Sitz." },
-      { id: 20, brand: "VAGABOND", name: "Absatzschuhe", category: "Schuhe", price: 139.00, oldPrice: null, tag: null, image: "photo-1543163521-1bf539c55dd2", alt: "Absatzschuhe von VAGABOND", description: "Elegante Absatzschuhe von VAGABOND mit bequemem Sitz und vielseitigem Design." },
+      { id: 20, brand: "VAGABOND", name: "Slingpumps Damen Catwalk", category: "Schuhe", price: 139.00, oldPrice: null, tag: null, image: "photo-1543163521-1bf539c55dd2", alt: "Slingpumps Damen Catwalk von VAGABOND", description: "Elegante Absatzschuhe von VAGABOND mit bequemem Sitz und farbigen Design." },
       { id: 21, brand: "NEW BALANCE", name: "Sneaker 327 in neutralen Farben", category: "Schuhe", price: 119.95, oldPrice: null, tag: "NEU", image: "photo-1600185365483-26d7a4cc7519", alt: "Moderner Sneaker in neutralen Farben", description: "Leichter Alltagssneaker mit komfortabler Sohle und sportlicher Retro-Silhouette." },
-      { id: 22, brand: "MANGO", name: "Sportschuhe", category: "Schuhe", price: 99.99, oldPrice: 129.99, tag: "-23%", image: "photo-1460353581641-37baddab0fa2", alt: "Sportliche Schuhe von MANGO", description: "Bequeme Sportschuhe mit griffiger Sohle und vielseitigem Design für Alltag und Bewegung." },
+      { id: 22, brand: "MANGO", name: "NOVABLAST 6 - Laufschuh Straße - energy white", category: "Schuhe", price: 99.99, oldPrice: 129.99, tag: "-23%", image: "photo-1460353581641-37baddab0fa2", alt: "NOVABLAST 6 Laufschuh von MANGO in weiß", description: "Bequeme Sportschuhe mit griffiger Sohle und vielseitigem Design für Alltag und Bewegung." },
       { id: 23, brand: "SELECTED", name: "Klassische Sneaker", category: "Schuhe", price: 89.00, oldPrice: null, tag: null, image: "photo-1552346154-21d32810aba3", alt: "Klassische Sneaker", description: "Bequeme Sneaker mit klassischer Form, passend zu lässigen und schicken Outfits." },
       { id: 24, brand: "ARKET", name: "Weißes Kleid aus Merinowolle", category: "Damen", price: 35.00, oldPrice: null, tag: null, image: "photo-1566206091558-7f218b696731", alt: "Weißes Kleid aus Merinowolle für Damen", description: "Weißes Kleid aus weicher Merinowolle, angenehm zu tragen und vielseitig kombinierbar." },
       { id: 25, brand: "MANGO", name: "Crossbody Bag mit kurzem Riemen", category: "Accessoires", price: 49.99, oldPrice: null, tag: "NEU", image: "photo-1584917865442-de89df76afd3", alt: "Kompakte Umhängetasche", description: "Kompakte Tasche mit verstellbarem Riemen und genügend Platz für alles Wichtige." },
@@ -314,7 +359,7 @@
       { id: 28, brand: "WEEKDAY", name: "Kunstlederjacke im Workwear-Stil", category: "Damen", price: 89.00, oldPrice: null, tag: "NEU", image: "photo-1529139574466-a303027c1d8b", alt: "Kunstlederjacke im Workwear-Stil", description: "Robuste Kunstlederjacke mit praktischen Taschen und entspannter Passform für den Alltag." },
       { id: 29, brand: "NORDGREEN", name: "Minimalistische Armbanduhr", category: "Accessoires", price: 129.00, oldPrice: null, tag: "NEU", image: "photo-1523275335684-37898b6baf30", alt: "Minimalistische Armbanduhr mit hellem Zifferblatt", description: "Schlichte Armbanduhr mit klar gestaltetem Zifferblatt als elegantes Accessoire." },
       { id: 30, brand: "VANS", name: "Skatesneaker aus Canvas", category: "Schuhe", price: 74.95, oldPrice: null, tag: null, image: "photo-1608231387042-66d1773070a5", alt: "Lässiger Canvas-Sneaker", description: "Bequemer Sneaker mit robuster Gummisohle und unkompliziertem Canvas-Obermaterial." },
-      { id: 31, brand: "Bay-Ran", name: "Bay Rand", category: "Accessoires", price: 149.00, oldPrice: null, tag: "NEU", image: "photo-1572635196237-14b3f281503f", alt: "Bay Rand Sonnenbrille von Bay-Ran", description: "Die Sonnenbrille META (GEN 2) WAYFARER von Bay-Ran vereint ein zeitloses Design mit dunklen Gläsern und UV-Schutz." }
+      { id: 31, brand: "Bay-Ran", name: "META (GEN 2) WAYFARER", category: "Accessoires", price: 149.00, oldPrice: null, tag: "NEU", image: "photo-1572635196237-14b3f281503f", alt: "Bay-Ran META (GEN 2) WAYFARER Sonnenbrille", description: "Die Sonnenbrille META (GEN 2) WAYFARER von Bay-Ran vereint ein zeitloses Design mit dunklen Gläsern und UV-Schutz." }
     ];
     const categoryOrder = ["Damen", "Herren", "Accessoires", "Schuhe", "Winter"];
 
@@ -326,6 +371,7 @@
     const cart = new Map(JSON.parse(localStorage.getItem("modo-cart") || "[]"));
     let selectedCategory = "Alle";
     let favoritesOnly = false;
+    let salePopupIndex = -1;
 
     function escapeHtml(value) {
       return String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[character]);
@@ -377,10 +423,11 @@
     }
 
     function renderProducts() {
-      const query = searchInput.value.trim().toLocaleLowerCase("de");
+      const query = searchInput.value.trim().toLocaleLowerCase("de").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       let visibleProducts = products.filter((product) => {
         const matchesCategory = selectedCategory === "Alle" || selectedCategory === product.category || (selectedCategory === "Winter" && product.season === "Winter") || (selectedCategory === "Sale" && product.oldPrice);
-        const matchesQuery = `${product.brand} ${product.name} ${product.category} ${product.season || ""}`.toLocaleLowerCase("de").includes(query);
+        const searchableText = `${product.brand} ${product.name} ${product.category} ${product.season || ""} ${product.description}`.toLocaleLowerCase("de").normalize("NFD").replace(/[\u0300-\u036f]/g, " ");
+        const matchesQuery = query.split(/\s+/).filter(Boolean).every((word) => searchableText.includes(word));
         return matchesCategory && matchesQuery && (!favoritesOnly || favorites.has(product.id));
       });
       if (sortSelect.value === "featured") visibleProducts = visibleProducts.toSorted((a, b) => {
@@ -416,6 +463,64 @@
         </article>`;
       }).join("");
       emptyState.style.display = visibleProducts.length ? "none" : "block";
+    }
+
+    function showSalePopup() {
+      const saleProducts = products.filter((product) => product.oldPrice);
+      if (!saleProducts.length) return;
+      salePopupIndex = (salePopupIndex + 1) % saleProducts.length;
+      const product = saleProducts[salePopupIndex];
+      const dialog = document.querySelector("#sale-dialog");
+      if (dialog.open) dialog.close();
+      document.querySelector("#sale-popup-image").src = productImageUrl(product.image, 720, 82);
+      document.querySelector("#sale-popup-image").alt = escapeHtml(product.alt);
+      document.querySelector("#sale-popup-title").textContent = product.name;
+      document.querySelector("#sale-popup-description").textContent = product.description;
+      document.querySelector("#sale-popup-price").innerHTML = `${product.price.toLocaleString("de-CH", { style: "currency", currency: "CHF" })} <span class="old-price">${product.oldPrice.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</span>`;
+      document.querySelector("#sale-buy-button").dataset.saleId = String(product.id);
+      dialog.showModal();
+    }
+
+    function getSearchMatches(query) {
+      const normalizedQuery = String(query).trim().toLocaleLowerCase("de").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (!normalizedQuery) return [];
+      return products.filter((product) => {
+        const searchableText = `${product.brand} ${product.name} ${product.category} ${product.season || ""} ${product.description}`.toLocaleLowerCase("de").normalize("NFD").replace(/[\u0300-\u036f]/g, " ");
+        return normalizedQuery.split(/\s+/).filter(Boolean).every((word) => searchableText.includes(word));
+      });
+    }
+
+    function openSearchPage(query) {
+      const value = String(query).trim();
+      if (!value) return;
+      window.location.assign(`?search=${encodeURIComponent(value)}`);
+    }
+
+    function renderSearchPage(query) {
+      const matches = getSearchMatches(query);
+      document.title = `Suche: ${query} — MODO`;
+      document.body.innerHTML = `
+        <main class="search-page">
+          <a class="search-page-back" href="${escapeHtml(window.location.pathname)}">← Zurück zum Shop</a>
+          <div class="search-page-header">
+            <div><p class="section-kicker">Suchergebnisse</p><h1>${escapeHtml(query)}</h1><p>${matches.length} ${matches.length === 1 ? "passender Artikel" : "passende Artikel"}</p></div>
+          </div>
+          ${matches.length ? `<div class="product-grid">${matches.map((product) => `
+            <article class="product-card">
+              <div class="product-image-wrap">
+                <a class="product-detail-button" href="?product=${product.id}" aria-label="Details für ${escapeHtml(product.name)} anzeigen">
+                  <img class="product-image" src="${productImageUrl(product.image, 720, 80)}" alt="${escapeHtml(product.alt)}">
+                </a>
+                ${product.tag ? `<span class="product-tag">${escapeHtml(product.tag)}</span>` : ""}
+              </div>
+              <div class="product-info">
+                <p class="product-brand">${escapeHtml(product.brand)}</p>
+                <p class="product-name">${escapeHtml(product.name)}</p>
+                <div class="product-bottom"><p class="product-price">${product.price.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}${product.oldPrice ? `<span class="old-price">${product.oldPrice.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</span>` : ""}</p><button class="add-button" type="button" data-search-add="${product.id}">In den Warenkorb</button></div>
+              </div>
+            </article>`).join("")}</div>` : `<p class="empty-state" style="display:block">Keine passenden Artikel gefunden.</p>`}
+        </main><div class="toast" id="toast" role="status" aria-live="polite"></div>`;
+      document.querySelectorAll("[data-search-add]").forEach((button) => button.addEventListener("click", () => addToCart(Number(button.dataset.searchAdd))));
     }
 
     function showToast(message) {
@@ -475,6 +580,8 @@
     const detailId = Number(pageParams.get("product"));
     if (detailId) {
       renderProductPage(detailId);
+    } else if (pageParams.has("search")) {
+      renderSearchPage(pageParams.get("search") || "");
     } else if (pageParams.has("checkout")) {
       renderCheckoutPage();
     } else {
@@ -492,7 +599,49 @@
       favoritesOnly = false;
       renderProducts();
     }));
-    searchInput.addEventListener("input", renderProducts);
+    const searchSuggestions = document.querySelector("#search-suggestions");
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.trim();
+      selectedCategory = "Alle";
+      favoritesOnly = false;
+      document.querySelectorAll(".category-tab").forEach((tab) => tab.setAttribute("aria-pressed", String(tab.dataset.category === "Alle")));
+      document.querySelector("#favorites-filter").setAttribute("aria-pressed", "false");
+      renderProducts();
+
+      const matches = getSearchMatches(query).slice(0, 5);
+      if (!query || !matches.length) {
+        searchSuggestions.hidden = true;
+        searchSuggestions.innerHTML = "";
+        return;
+      }
+      searchSuggestions.innerHTML = matches.map((product) => `
+        <button class="search-suggestion" type="button" role="option" data-search-product="${product.id}" data-search-name="${escapeHtml(product.name)}">
+          <img src="${productImageUrl(product.image, 120, 75)}" alt="">
+          <span><span class="search-suggestion-name">${escapeHtml(product.name)}</span><span class="search-suggestion-brand">${escapeHtml(product.brand)} · ${escapeHtml(product.category)}</span></span>
+          <span class="search-suggestion-price">${product.price.toLocaleString("de-CH", { style: "currency", currency: "CHF" })}</span>
+        </button>`).join("");
+      searchSuggestions.hidden = false;
+    });
+    searchSuggestions.addEventListener("click", (event) => {
+      const suggestion = event.target.closest("[data-search-name]");
+      if (!suggestion) return;
+      openSearchPage(suggestion.dataset.searchName);
+    });
+    searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        openSearchPage(searchInput.value);
+      }
+      if (event.key === "Escape") {
+        searchInput.value = "";
+        searchSuggestions.hidden = true;
+        searchInput.dispatchEvent(new Event("input"));
+        searchInput.blur();
+      }
+    });
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest(".search-row")) searchSuggestions.hidden = true;
+    });
     sortSelect.addEventListener("change", renderProducts);
     grid.addEventListener("click", (event) => {
       const favoriteButton = event.target.closest("[data-favorite]");
@@ -541,8 +690,19 @@
       if (cart.size) window.location.assign("?checkout");
     });
 
+    const saleDialog = document.querySelector("#sale-dialog");
+    document.querySelector("#close-sale-popup").addEventListener("click", () => saleDialog.close());
+    document.querySelector("#dismiss-sale-popup").addEventListener("click", () => saleDialog.close());
+    document.querySelector("#sale-buy-button").addEventListener("click", (event) => {
+      addToCart(Number(event.currentTarget.dataset.saleId));
+      saleDialog.close();
+    });
+
     renderProducts();
     updateCartCount();
+
+    showSalePopup();
+    window.setInterval(showSalePopup, 3 * 60 * 1000);
 
     if (new URLSearchParams(window.location.search).has("dev")) {
       fetch(window.location.href, { cache: "no-store" })
